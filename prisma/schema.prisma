@@ -1,0 +1,26 @@
+// Neon Postgres · Prisma 管理
+// 改完 schema 跑 pnpm db:migrate
+//
+// pooled 连接串（主机名带 -pooler）给运行时用  -> DATABASE_URL
+// direct 连接串（主机名去掉 -pooler）给迁移用  -> DIRECT_URL
+// migrate 要建临时 shadow database，池化连接不支持，所以必须配 directUrl。
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider  = "postgresql"
+  url       = env("DATABASE_URL")
+  directUrl = env("DIRECT_URL")
+}
+
+// 需要建表就写在这里，例如：
+//
+// model Example {
+//   id        String   @id @default(cuid())
+//   title     String   @db.VarChar(120)
+//   createdAt DateTime @default(now()) @map("created_at")
+//
+//   @@map("examples")
+// }
