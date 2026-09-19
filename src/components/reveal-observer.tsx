@@ -25,14 +25,22 @@ export default function RevealObserver() {
       return;
     }
 
-    let fired = 0;
+    // 逐个跟踪还没亮起的元素。不能只记「回调是否来过」：
+    // 只要页面上部有一个 .reveal 触发过回调，下方还没交付的元素就会被漏网，
+    // 一直停在 opacity:0。
+    const pending = new Set<HTMLElement>();
+    els.forEach((el) => {
+      if (!el.classList.contains("is-visible")) pending.add(el);
+    });
+
     const io = new IntersectionObserver(
       (entries) => {
-        fired++;
         for (const entry of entries) {
           if (entry.isIntersecting) {
-            entry.target.classList.add("is-visible");
-            io.unobserve(entry.target);
+            const el = entry.target as HTMLElement;
+            el.classList.add("is-visible");
+            pending.delete(el);
+            io.unobserve(el);
           }
         }
       },
@@ -42,10 +50,10 @@ export default function RevealObserver() {
     els.forEach((el) => io.observe(el));
 
     // 看门狗：正常浏览器里 observe 后立刻就会回调，这个计时器是空转的。
-    // 只有在 IO 完全不回调（某些嵌入式/受限 Webview）时才生效，
+    // 只有在 IO 不完全回调（某些嵌入式/受限 Webview）时才生效，
     // 保证内容不会永远停在 opacity:0 变成空白页。
     const watchdog = setTimeout(() => {
-      if (fired === 0) els.forEach((el) => el.classList.add("is-visible"));
+      pending.forEach((el) => el.classList.add("is-visible"));
     }, 2500);
 
     return () => {
