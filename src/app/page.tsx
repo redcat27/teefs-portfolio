@@ -18,8 +18,6 @@ import {
   heroSub,
   heroTerminalLines,
   heroTitle,
-  journey,
-  skillGroups,
   site,
   socials,
 } from "@/lib/site";
@@ -33,7 +31,12 @@ const socialIcons = {
   linkedin: IconLinkedIn,
 } as const;
 
-/** 滚动显现只需一个全局观察者，见 RevealObserver；类名写在这里，延迟写在 style 上 */
+/**
+ * 一人公司名片：Hero → 项目 → 关于 → 联系。
+ * 「技能与工具」和「经历」暂时隐藏（样式仍在 globals.css），
+ * 以后要做「合作客户」展示时把对应 section 加回来。
+ * 滚动显现只需一个全局观察者，见 RevealObserver。
+ */
 export default function Home() {
   return (
     <>
@@ -108,37 +111,8 @@ export default function Home() {
           </div>
         </section>
 
-        {/* ===== Skills ===== */}
-        <section className="section" id="skills" style={altSectionStyle}>
-          <div className="container">
-            <div className="section-head reveal">
-              <span className="eyebrow">tech stack</span>
-              <h2 className="section-title">技能与工具</h2>
-              <p className="section-lead">以下是占位技术栈，可替换为你实际掌握的技能。</p>
-            </div>
-            <div className="skills-grid">
-              {skillGroups.map((g, i) => (
-                <div
-                  key={g.title}
-                  className="skill-block reveal"
-                  style={{ transitionDelay: `${i * 60}ms` }}
-                >
-                  <h3>{g.title}</h3>
-                  <div className="skill-list">
-                    {g.items.map((item) => (
-                      <span className="skill-chip" key={item}>
-                        {item}
-                      </span>
-                    ))}
-                  </div>
-                </div>
-              ))}
-            </div>
-          </div>
-        </section>
-
         {/* ===== About ===== */}
-        <section className="section" id="about">
+        <section className="section" id="about" style={altSectionStyle}>
           <div className="container">
             <div className="section-head reveal">
               <span className="eyebrow">about</span>
@@ -167,31 +141,6 @@ export default function Home() {
                   </div>
                 ))}
               </div>
-            </div>
-          </div>
-        </section>
-
-        {/* ===== Journey ===== */}
-        <section className="section" id="journey" style={altSectionStyle}>
-          <div className="container">
-            <div className="section-head reveal">
-              <span className="eyebrow">journey</span>
-              <h2 className="section-title">经历与教育</h2>
-              <p className="section-lead">以下为占位时间线，可替换为你的真实经历。</p>
-            </div>
-            <div className="timeline">
-              {journey.map((j, i) => (
-                <div
-                  key={j.title}
-                  className="timeline-item reveal"
-                  style={{ transitionDelay: `${i * 70}ms` }}
-                >
-                  <div className="timeline-date">{j.date}</div>
-                  <h3 className="timeline-title">{j.title}</h3>
-                  <p className="timeline-org">{j.org}</p>
-                  <p className="timeline-desc">{j.desc}</p>
-                </div>
-              ))}
             </div>
           </div>
         </section>
